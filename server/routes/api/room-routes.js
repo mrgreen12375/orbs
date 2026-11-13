@@ -1,16 +1,36 @@
 const router = require("express").Router();
-const { Op } = require("sequelize");
 const { Room } = require("../../models");
 
-// get all rooms
+// GET /api/rooms
+// Get all active rooms
 router.get("/", async (req, res) => {
   try {
-    const roomData = await Room.findAll();
+    const rooms = await Room.findAll({
+      where: { active: true },
+      order: [["name", "ASC"]],
+    });
 
-    res.json(roomData);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json(err);
+    res.json(rooms);
+  } catch (error) {
+    console.error("Error fetching rooms:", error);
+    res.status(500).json({ message: "Failed to fetch rooms." });
+  }
+});
+
+// GET /api/rooms/:id
+// Get a single room
+router.get("/:id", async (req, res) => {
+  try {
+    const room = await Room.findByPk(req.params.id);
+
+    if (!room) {
+      return res.status(404).json({ message: "Room not found." });
+    }
+
+    res.json(room);
+  } catch (error) {
+    console.error("Error fetching room:", error);
+    res.status(500).json({ message: "Failed to fetch room." });
   }
 });
 
