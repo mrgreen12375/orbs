@@ -1,9 +1,62 @@
-const Room = require("./Room");
-const Reservation = require("./Reservation");
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/connection");
 
-Room.hasMany(Reservation, {
-  foreignKey: "id",
-  onDelete: "CASCADE",
-});
+const Reservation = sequelize.define(
+  "Reservation",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
 
-module.exports = { Room, Reservation };
+    roomId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "rooms",
+        key: "id",
+      },
+    },
+
+    reservedBy: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    startTime: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+
+    endTime: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      validate: {
+        isAfterStart(value) {
+          if (new Date(value) <= new Date(this.startTime)) {
+            throw new Error("End time must be after start time.");
+          }
+        },
+      },
+    },
+
+    purpose: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+
+    status: {
+      type: DataTypes.ENUM("requested", "confirmed", "cancelled"),
+      allowNull: false,
+      defaultValue: "requested",
+    },
+  },
+  {
+    tableName: "reservations",
+    timestamps: true,
+    underscored: true,
+  }
+);
+
+module.exports = Reservation;
