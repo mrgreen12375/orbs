@@ -1,6 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 
 function Reservation() {
+  const [currentWeek, setCurrentWeek] = useState(new Date());
+
+  const [formData, setFormData] = useState({
+    room: "",
+    start: "",
+    end: "",
+    purpose: "",
+  });
+
+  const [message, setMessage] = useState("");
+
+  const handlePrevWeek = () => {
+    const prevWeek = new Date(currentWeek);
+    prevWeek.setDate(prevWeek.getDate() - 7);
+    setCurrentWeek(prevWeek);
+  };
+
+  const handleNextWeek = () => {
+    const nextWeek = new Date(currentWeek);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    setCurrentWeek(nextWeek);
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleCreateBooking = async () => {
+    try {
+      // TODO: Call your API here
+
+      console.log(formData);
+
+      setMessage("Room booked successfully!");
+    } catch (error) {
+      setMessage("Failed to create booking.");
+    }
+  };
+
+  const handleReset = () => {
+    setFormData({
+      room: "",
+      start: "",
+      end: "",
+      purpose: "",
+    });
+
+    setMessage("");
+  };
+
   return (
     <div className="rb-wrap">
       <div className="rb-head">
@@ -14,27 +67,73 @@ function Reservation() {
 
       <div className="rb-panel">
         <div className="rb-toolbar">
-          <button className="rb-btn" id="rb-prev" type="button">
+          <button className="rb-btn" type="button" onClick={handlePrevWeek}>
             Previous week
           </button>
 
-          <strong id="rb-week-label">Loading week...</strong>
+          <strong>{currentWeek.toLocaleDateString()}</strong>
 
-          <button className="rb-btn" id="rb-next" type="button">
+          <button className="rb-btn" type="button" onClick={handleNextWeek}>
             Next week
           </button>
         </div>
 
         <div className="rb-grid">
           <table className="rb-table">
-            <thead id="rb-head-days"></thead>
-            <tbody id="rb-calendar"></tbody>
+            <thead>
+              <tr>
+                <th>Room</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>Room A</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <tr>
+                <td>Room B</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <tr>
+                <td>Room C</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <tr>
+                <td>Room D</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
 
       <div className="rb-panel rb-booking-panel">
-        <h2>Create a booking</h2>
+        <h2>Create a Booking</h2>
 
         <p className="rb-booking-intro">
           Choose a room, set the time, and add a purpose.
@@ -43,24 +142,42 @@ function Reservation() {
         <div className="rb-form">
           <label className="rb-field">
             Room
-            <select id="rb-room"></select>
+            <select name="room" value={formData.room} onChange={handleChange}>
+              <option value="">Select a Room</option>
+              <option value="A">Conference Room A</option>
+              <option value="B">Conference Room B</option>
+              <option value="C">Conference Room C</option>
+              <option value="D">Conference Room D</option>
+            </select>
           </label>
 
           <label className="rb-field">
             Start
-            <input id="rb-start" type="datetime-local" />
+            <input
+              type="datetime-local"
+              name="start"
+              value={formData.start}
+              onChange={handleChange}
+            />
           </label>
 
           <label className="rb-field">
             End
-            <input id="rb-end" type="datetime-local" />
+            <input
+              type="datetime-local"
+              name="end"
+              value={formData.end}
+              onChange={handleChange}
+            />
           </label>
 
           <label className="rb-field">
             Purpose
             <input
-              id="rb-purpose"
               type="text"
+              name="purpose"
+              value={formData.purpose}
+              onChange={handleChange}
               maxLength={100}
               placeholder="Team planning"
             />
@@ -68,20 +185,26 @@ function Reservation() {
         </div>
 
         <div className="rb-actions">
-          <button id="rb-reset" type="button" className="rb-btn rb-btn-danger">
-            Reset reservations
+          <button
+            type="button"
+            className="rb-btn rb-btn-danger"
+            onClick={handleReset}
+          >
+            Reset Reservations
           </button>
 
           <button
-            id="rb-create"
             type="button"
             className="rb-btn rb-btn-primary"
+            onClick={handleCreateBooking}
           >
-            Book room
+            Book Room
           </button>
         </div>
 
-        <div id="rb-message" role="status" aria-live="polite"></div>
+        <div role="status" aria-live="polite">
+          {message}
+        </div>
       </div>
     </div>
   );
