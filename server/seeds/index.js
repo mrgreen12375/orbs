@@ -1,25 +1,13 @@
-const { sequelize } = require("../models");
+const sequelize = require("../config/connection");
+
 const seedRooms = require("./room-seeds");
 
-const seedDatabase = async () => {
-  try {
-    console.log("Connecting to database...");
+const seedAll = async () => {
+  await sequelize.sync({ force: true });
 
-    await sequelize.authenticate();
+  await seedRooms();
 
-    console.log("Synchronizing database...");
-    await sequelize.sync();
-
-    console.log("Seeding rooms...");
-    await seedRooms();
-
-    console.log("Database successfully seeded!");
-  } catch (error) {
-    console.error("Error seeding database:", error);
-    process.exitCode = 1;
-  } finally {
-    await sequelize.close();
-  }
+  process.exit(0);
 };
 
-seedDatabase();
+seedAll();
