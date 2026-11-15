@@ -84,8 +84,8 @@ router.post("/", async (req, res) => {
     const reservation = await Reservation.create({
       roomId,
       reservedBy,
-      startTime,
-      endTime,
+      startTime: new Date(startTime),
+      endTime: new Date(endTime),
       purpose,
     });
 

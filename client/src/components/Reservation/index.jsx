@@ -144,8 +144,8 @@ function Reservation() {
       const reservationData = {
         roomId: Number(formData.room),
         reservedBy: "Steven Green",
-        startTime: formData.start,
-        endTime: formData.end,
+        startTime: new Date(formData.start).toISOString(),
+        endTime: new Date(formData.end).toISOString(),
         purpose: formData.purpose,
       };
 
