@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { Op } = require("sequelize");
 const { Reservation, Room } = require("../../models");
 
 // GET /api/reservations
@@ -9,6 +10,7 @@ router.get("/", async (req, res) => {
       include: [
         {
           model: Room,
+          as: "room",
           attributes: ["id", "name"],
         },
       ],
@@ -19,7 +21,7 @@ router.get("/", async (req, res) => {
   } catch (error) {
     console.error("Error fetching reservations:", error);
     res.status(500).json({
-      message: "Failed to fetch reservations.",
+      message: error.message,
     });
   }
 });
@@ -32,6 +34,7 @@ router.get("/:id", async (req, res) => {
       include: [
         {
           model: Room,
+          as: "room",
           attributes: ["id", "name"],
         },
       ],
@@ -47,7 +50,7 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     console.error("Error fetching reservation:", error);
     res.status(500).json({
-      message: "Failed to fetch reservation.",
+      message: error.message,
     });
   }
 });
@@ -57,6 +60,26 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { roomId, reservedBy, startTime, endTime, purpose } = req.body;
+
+    const conflictingReservation = await Reservation.findOne({
+      where: {
+        roomId,
+
+        startTime: {
+          [Op.lt]: endTime,
+        },
+
+        endTime: {
+          [Op.gt]: startTime,
+        },
+      },
+    });
+
+    if (conflictingReservation) {
+      return res.status(400).json({
+        message: "This room is already reserved during that time.",
+      });
+    }
 
     const reservation = await Reservation.create({
       roomId,
@@ -68,7 +91,8 @@ router.post("/", async (req, res) => {
 
     res.status(201).json(reservation);
   } catch (error) {
-    console.error("Error creating reservation:", error);
+    console.error(error);
+
     res.status(500).json({
       message: error.message,
     });
@@ -98,8 +122,29 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// DELETE /api/reservations
+// Delete all reservations
+router.delete("/", async (req, res) => {
+  try {
+    const deletedCount = await Reservation.destroy({
+      where: {},
+    });
+
+    res.json({
+      message: "All reservations deleted successfully.",
+      deletedCount,
+    });
+  } catch (error) {
+    console.error("Error deleting all reservations:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
 // DELETE /api/reservations/:id
-// Cancel reservation
+// Delete reservation
 router.delete("/:id", async (req, res) => {
   try {
     const reservation = await Reservation.findByPk(req.params.id);

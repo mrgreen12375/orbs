@@ -1,26 +1,15 @@
-const { sequelize, Room, Reservation } = require("../models");
+const sequelize = require("../config/connection");
+
 const seedRooms = require("./room-seeds");
+const seedReservations = require("./reservation-seeds");
 
-const seedDatabase = async () => {
-  try {
-    await sequelize.authenticate();
+const seedAll = async () => {
+  await sequelize.sync({ force: true });
 
-    // Create the rooms table first.
-    await Room.sync();
+  await seedRooms();
+  await seedReservations();
 
-    // Create the reservations table second.
-    await Reservation.sync();
-
-    // Populate the rooms table.
-    await seedRooms();
-
-    console.log("Database seeded successfully.");
-  } catch (error) {
-    console.error("Error seeding database:", error);
-    process.exitCode = 1;
-  } finally {
-    await sequelize.close();
-  }
+  process.exit(0);
 };
 
-seedDatabase();
+seedAll();
