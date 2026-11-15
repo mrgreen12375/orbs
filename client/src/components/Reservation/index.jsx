@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReservationCard from "../ReservationCard";
+import logo from "../../assets/orb.png";
 
 function Reservation() {
   const [currentWeek, setCurrentWeek] = useState(new Date());
@@ -229,12 +230,9 @@ function Reservation() {
   return (
     <div className="rb-wrap">
       <div className="rb-head">
-        <div>
+        <div className="rb-logo">
+          <img src={logo} alt="Logo" />
           <h1>Office Room Booking System</h1>
-
-          <div className="rb-muted">
-            Weekly schedule for Conference Rooms A-D
-          </div>
         </div>
       </div>
 

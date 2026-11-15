@@ -1,12 +1,12 @@
 import React from "react";
-
 import { Link } from "react-router-dom";
+import orbLanding from "../../assets/orb-landing.png";
 
 function Landing() {
   return (
-    <div>
+    <div className="landing">
       <Link id="getButton" to="/reservation">
-        Welcome to Orbs! Click here to get started.
+        <img src={orbLanding} alt="ORBS - Reserve an office room" />
       </Link>
     </div>
   );

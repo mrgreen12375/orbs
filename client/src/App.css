@@ -1,3 +1,34 @@
+.rb-logo {
+  display: flex;
+  align-items: center;
+}
+
+.rb-logo img {
+  width: 80px;
+  height: 80px;
+  margin-right: 8px;
+}
+
+.landing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.landing img {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.landing img:hover {
+  transform: scale(1.03);
+}
+
 .reservation-card {
   background: #e5f0fb;
   border-left: 3px solid #5689c2;
