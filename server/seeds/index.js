@@ -1,7 +1,6 @@
 const sequelize = require("../config/connection");
 
 const seedRooms = require("./room-seeds");
-const seedReservations = require("./reservation-seeds");
 
 const seedAll = async () => {
   await sequelize.sync({ force: true });
